@@ -279,8 +279,8 @@
 
     $.fn.asJsonData = function () {
         const deferred = jQuery.Deferred();
-        const data = {};
-        const files = {};
+        const data = Object.create(null);
+        const files = Object.create(null);
 
         function set(name, multiple, value) {
             const members = name.split('.');
@@ -288,18 +288,21 @@
             for (let target = data, i = 0; i < members.length; i++) {
                 const last = i === members.length - 1;
                 const member = members[i];
+                if (member === '__proto__' || member === 'constructor' || member === 'prototype') return;
                 const checkMap = /([0-9a-zA-Z_]+)\[([^\]]+)]/.exec(member);
                 if (checkMap) {
                     const key = checkMap[1];
                     const attr = checkMap[2];
-                    if (target[key] === undefined) target[key] = {};
+                    if (key === '__proto__' || key === 'constructor' || key === 'prototype'
+                        || attr === '__proto__' || attr === 'constructor' || attr === 'prototype') return;
+                    if (target[key] === undefined) target[key] = Object.create(null);
                     target = target[key];
                     if (last) {
                         if (multiple) if (!target[attr]) target[attr] = [];
                         if (multiple) target[attr].push(value);
                         else target[attr] = value;
                     } else {
-                        if (target[attr] === undefined) target[attr] = {};
+                        if (target[attr] === undefined) target[attr] = Object.create(null);
                         target = target[attr];
                     }
                 } else {
@@ -308,7 +311,7 @@
                         if (multiple) target[member].push(value);
                         else target[member] = value;
                     } else {
-                        if (target[member] === undefined) target[member] = {};
+                        if (target[member] === undefined) target[member] = Object.create(null);
                         target = target[member];
                     }
                 }
@@ -317,7 +320,7 @@
 
         function convertFileToData() {
             for (let name in files) {
-                if (files.hasOwnProperty(name)) {
+                if (Object.prototype.hasOwnProperty.call(files, name)) {
                     let file = files[name];
                     if (file instanceof Array) {
                         if (!file.length) {

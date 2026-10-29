@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,8 +37,8 @@ public class UserApiController extends ApiBaseController {
     private FileService fileService;
 
     @Operation(summary = "로그인")
-    @GetMapping("login")
-    public JsonResult<User> login(@Valid LoginRequest form, BindingResult bindingResult) {
+    @PostMapping("login")
+    public JsonResult<User> login(@RequestBody @Valid LoginRequest form, BindingResult bindingResult) {
         if (!form.validate(bindingResult))
             return JsonResult.create(bindingResult);
 
@@ -53,7 +54,7 @@ public class UserApiController extends ApiBaseController {
     }
 
     @Operation(summary = "로그아웃")
-    @GetMapping("logout")
+    @PostMapping("logout")
     public JsonResult logout() {
         g.invalidateSession();
         return JsonResult.create();
