@@ -3,6 +3,7 @@ package org.tinywind.webtemplate.util.jooq;
 import org.tinywind.webtemplate.util.FormUtils;
 import org.tinywind.webtemplate.util.spring.SpringApplicationContextAware;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.TableImpl;
 
 import java.util.LinkedHashMap;

@@ -3,6 +3,7 @@ package org.tinywind.webtemplate.util.jooq;
 import org.tinywind.webtemplate.util.page.Pagination;
 import org.tinywind.webtemplate.util.spring.SpringApplicationContextAware;
 import org.jooq.*;
+import org.jooq.Record;
 
 import java.util.List;
 

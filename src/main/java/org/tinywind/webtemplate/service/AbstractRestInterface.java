@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
@@ -22,9 +22,9 @@ import java.util.Map;
 
 public abstract class AbstractRestInterface {
     private static final Logger logger = LoggerFactory.getLogger(AbstractRestInterface.class);
-    private static final HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+    private static final SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
 
-    private static HttpComponentsClientHttpRequestFactory getFactory() {
+    private static SimpleClientHttpRequestFactory getFactory() {
         factory.setConnectTimeout(5 * 1000);
         factory.setReadTimeout(5 * 1000);
         return factory;
@@ -44,7 +44,7 @@ public abstract class AbstractRestInterface {
             @SuppressWarnings("unchecked") final Map<String, Object> params = (Map<String, Object>) objectMapper.convertValue(o, Map.class);
             // template.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 
-            final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url);
+            final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
             if (method.equals(HttpMethod.GET)) params.forEach(builder::queryParam);
             final URI uri = builder.build().encode().toUri();
 

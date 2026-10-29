@@ -1,7 +1,7 @@
 package org.tinywind.webtemplate.controller.api;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
 import org.tinywind.webtemplate.model.User;
 import org.tinywind.webtemplate.model.form.LoginRequest;
 import org.tinywind.webtemplate.repository.UserRepository;
@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * @author tinywind
  * @since 2018-01-14
  */
-@Api(description = "사용자 정보", tags = {"USER"}, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "USER", description = "사용자 정보")
 @RestController
 @RequestMapping(value = "api/user", produces = MediaType.APPLICATION_JSON_VALUE)
 @PropertySource("classpath:application.properties")
@@ -35,7 +35,7 @@ public class UserApiController extends ApiBaseController {
     @Autowired
     private FileService fileService;
 
-    @ApiOperation("로그인")
+    @Operation(summary = "로그인")
     @GetMapping("login")
     public JsonResult<User> login(@Valid LoginRequest form, BindingResult bindingResult) {
         if (!form.validate(bindingResult))
@@ -52,7 +52,7 @@ public class UserApiController extends ApiBaseController {
         return JsonResult.data(user);
     }
 
-    @ApiOperation("로그아웃")
+    @Operation(summary = "로그아웃")
     @GetMapping("logout")
     public JsonResult logout() {
         g.invalidateSession();
