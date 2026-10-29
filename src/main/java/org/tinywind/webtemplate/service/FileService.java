@@ -13,8 +13,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import org.tinywind.webtemplate.util.StoredFilePaths;
+
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.io.IOException;
 
 /**
@@ -60,18 +65,27 @@ public class FileService {
     }
 
     public Long save(String fileName, byte[] bytes) throws IOException {
+        StoredFilePaths.resolve(fileLocation, fileName);
         final String filePath = System.currentTimeMillis() + "_" + System.nanoTime() + "_" + fileName;
-        final File file = new File(fileLocation, filePath);
-        try (final FileOutputStream writer = new FileOutputStream(file)) {
+        final Path file = StoredFilePaths.resolve(fileLocation, filePath);
+        boolean created = false;
+        try (final OutputStream writer = Files.newOutputStream(file, StandardOpenOption.CREATE_NEW,
+                StandardOpenOption.WRITE, LinkOption.NOFOLLOW_LINKS)) {
+            created = true;
             writer.write(bytes);
             writer.flush();
 
             return fileRepository.save(bytes.length, fileName, filePath);
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            boolean deleted = file.delete();
-            if (!deleted) logger.error("Failed: delete file: " + file.getAbsolutePath());
-
+            logger.error("Unable to store uploaded file");
+            if (created) {
+                try {
+                    Files.deleteIfExists(file);
+                } catch (IOException cleanupFailure) {
+                    logger.error("Unable to remove incomplete uploaded file");
+                    e.addSuppressed(cleanupFailure);
+                }
+            }
             throw e;
         }
     }
