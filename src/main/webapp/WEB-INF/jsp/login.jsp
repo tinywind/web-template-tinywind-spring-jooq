@@ -25,7 +25,7 @@
 </head>
 <body>
 
-<form:form id="form" commandName="form" method="post"
+<form:form id="form" modelAttribute="form" method="post"
            action="${pageContext.request.contextPath}/api/user/login"
            cssClass="loginBox" data-ajax="true" data-done="successLogin">
     <ol>
